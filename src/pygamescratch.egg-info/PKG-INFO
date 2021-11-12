@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: pygamescratch
+Version: 0.1
+Summary: provide scratch like API using pygame, while just using 2 threads
+Home-page: https://github.com/jetwang/pygame-scratch
+Author: Jet Wang
+Author-email: jetwangw@163.com
+License: MIT
+Keywords: scratch children education learn python game easy
+Platform: UNKNOWN
+
+UNKNOWN
+
