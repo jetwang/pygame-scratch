@@ -13,28 +13,6 @@ from collections import OrderedDict
 import pygame
 from pygame.locals import *
 
-# 以下是默认参数，外部可以修改
-default_music_folder = "./music/"  # 默认音乐文件夹
-default_font_folder = "./font/"  # 默认字体文件夹
-default_sprite_image_folder = "./images/sprite/"  # 默认角色文件夹
-default_backdrop_image_folder = "./images/backdrop/"  # 默认字体文件夹
-default_backdrop_color = (255, 255, 255)  # 默认背景色
-default_screen_size = (470, 700)  # 默认窗口大小
-max_x, max_y = (default_screen_size[0] / 2, default_screen_size[1] / 2)
-default_font_name = None  # 默认字体名称
-default_key_repeat_delay = 20  # 按压键盘重复触发key down事件的间隔
-
-# 以下是默认事件名称，可以引用
-EVENT_MOUSE_LEFT = "_EVENT_MOUSE_LEFT"
-EVENT_MOUSE_RIGHT = "_EVENT_MOUSE_RIGHT"
-EVENT_MOUSE_MIDDLE = "_EVENT_MOUSE_MIDDLE"
-EVENT_START = "EVENT_START"
-EVENT_SPRITE_CREATED = "_EVENT_SPRITE_CREATED"
-
-# 以下是公共变量，可以访问
-mouse_position = (0, 0)  # 存放当前鼠标的位置
-game_paused = False  # 当前游戏是否暂停
-
 # 以下是私有变量，不对外
 _EVENT_KEY_UP = "_EVENT_KEY_UP"
 _EVENT_KEY_DOWN = "_EVENT_KEY_DOWN"
@@ -54,6 +32,42 @@ _sprites_max_id = 0  # 每创建一个角色就会赋予一个编号，该变量
 
 _texts = OrderedDict()  # 存放要显示在screen中的所有文本，文本id为主键
 _key_down_list = []  # 存放当前按住的键位列表
+_default_screen_size = (470, 700)  # 默认窗口大小
+
+# 以下是默认参数，外部可以修改
+default_music_folder = "./music/"  # 默认音乐文件夹
+default_font_folder = "./font/"  # 默认字体文件夹
+default_sprite_image_folder = "./images/sprite/"  # 默认角色文件夹
+default_backdrop_image_folder = "./images/backdrop/"  # 默认字体文件夹
+default_backdrop_color = (255, 255, 255)  # 默认背景色
+max_x, max_y = (_default_screen_size[0] / 2, _default_screen_size[1] / 2)
+default_font_name = None  # 默认字体名称
+default_key_repeat_delay = 20  # 按压键盘重复触发key down事件的间隔
+
+# 以下是默认事件名称，可以引用
+EVENT_MOUSE_LEFT = "_EVENT_MOUSE_LEFT"
+EVENT_MOUSE_RIGHT = "_EVENT_MOUSE_RIGHT"
+EVENT_MOUSE_MIDDLE = "_EVENT_MOUSE_MIDDLE"
+EVENT_START = "EVENT_START"
+EVENT_SPRITE_CREATED = "_EVENT_SPRITE_CREATED"
+
+# 以下是公共变量，可以访问
+mouse_position = (0, 0)  # 存放当前鼠标的位置
+game_paused = False  # 当前游戏是否暂停
+
+
+def screen_size(width, height):
+    """
+    修改屏幕大小
+    :param width:
+    :param height:
+    :return:
+    """
+    global max_x
+    global max_y
+    global _default_screen_size
+    _default_screen_size = (width, height)
+    max_x, max_y = (_default_screen_size[0] / 2, _default_screen_size[1] / 2)
 
 
 def text(text_id, text_str, x=-120, y=-120, size=40, color=(128, 128, 128)):
@@ -212,7 +226,8 @@ def _update_screen():
                 if text_x < 0:
                     text_x = rect.x + text_rect.width / 2
                 if s.text['bg_color']:
-                    pygame.draw.circle(_screen, s.text['bg_color'], [text_x, text_y], text_rect.width / 2 + 2, text_rect.width + 2)
+                    pygame.draw.circle(_screen, s.text['bg_color'], [text_x, text_y], text_rect.width / 2 + 2,
+                                       text_rect.width + 2)
                 _screen.blit(text_image, (text_x - text_rect.width / 2, text_y - text_rect.height / 2))
 
     for t in _texts.values():
@@ -401,7 +416,7 @@ def start():
     global _screen
     global _game_running
     pygame.init()
-    _screen = pygame.display.set_mode(default_screen_size)
+    _screen = pygame.display.set_mode(_default_screen_size)
 
     _screen.fill(default_backdrop_color)
     pygame.font.init()
@@ -491,6 +506,7 @@ def remove_backdrop(name):
 def pygame_rect(target_rect):
     """
     获取pygame的rect对象，pygame最左上方的坐标是（0,0），而在本游戏中，中心点的坐标为（0,0），分为4个象限
+    pygame每个物体的坐标是指左上角，而本游戏坐标是指物体的中心
     :param target_rect:
     :return:
     """
@@ -526,7 +542,8 @@ class Sprite(object):
 
         for file_name in os.listdir(sprite_image_name):
             file_name_key = os.path.splitext(file_name)[0]
-            self.costume[file_name_key] = os.path.join(sprite_image_name, file_name)  # open(os.path.join(name,file_name), 'r')
+            self.costume[file_name_key] = os.path.join(sprite_image_name,
+                                                       file_name)  # open(os.path.join(name,file_name), 'r')
 
         current_costume = list(self.costume.items())[0]
         self.current_costume_key = current_costume[0]
@@ -618,6 +635,14 @@ class Sprite(object):
         direction_pi = math.atan2(y - self.rect.y, x - self.rect.x)
         self.direction = (direction_pi * 180) / math.pi
         self.direction = 90 - self.direction
+
+    def point_to_sprite(self, target_sprite):
+        """
+        指定特定角色
+        :param target_sprite:
+        :return:
+        """
+        self.point_to(target_sprite.rect.center[0],target_sprite.rect.center[1])
 
     def point_towards_mouse_pointer(self):
         """

@@ -42,6 +42,6 @@ def create_sprities():
 if __name__ == "__main__":
     pygs.default_font_name = g.font_name
     pygs.default_key_repeat_delay = 2000
-    pygs.default_screen_size = (470, 700)
+    pygs.screen_size(470, 700)
     regist_global_event(EVENT_START, create_sprities)
     start()

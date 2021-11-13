@@ -16,7 +16,7 @@ src/sample-simple 里面是简单示例，一只猫向一只球移动，碰到�
 ```bash
 cd src/sample-planefight
 pip install pygamescratch
-python main.py
+python plane_fight.py
 ```
 ### 飞机大战示例使用说明
 1. 移动： WASD四个按键
