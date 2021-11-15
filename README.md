@@ -302,12 +302,7 @@ Sprite类
         打印出异常信息
         :param e: 异常
         :return:
-    
-    pygame_rect(target_rect)
-        获取pygame的rect对象，pygame最左上方的坐标是（0,0），而在本游戏中，中心点的坐标为（0,0），分为4个象限
-        :param target_rect:
-        :return:
-    
+     
     refresh_events()
         刷新事件列表，前一帧之前触发的事件都会被清除，不管有没有触发过
     

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pygamescratch
-Version: 0.2
+Version: 0.3
 Summary: provide scratch like API using pygame, while just using 2 threads
 Home-page: https://github.com/jetwang/pygame-scratch
 Author: Jet Wang
