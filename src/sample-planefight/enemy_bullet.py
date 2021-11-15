@@ -2,8 +2,8 @@ from pygamescratch import *
 
 
 class EnemyBullet(Sprite):
-    def __init__(self, x, y, target_x, target_y):
-        Sprite.__init__(self, "enemybullet", x, y)
+    def __init__(self, center_x, center_y, target_x, target_y):
+        Sprite.__init__(self, "enemybullet", center_x, center_y)
         self.move_speed = 3
         self.point_to(target_x, target_y)
         self.set_size_to(50)

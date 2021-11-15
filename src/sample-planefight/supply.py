@@ -3,8 +3,8 @@ import global_var as g
 
 
 class Supply(Sprite):
-    def __init__(self, supply_type, x, y):
-        Sprite.__init__(self, "supply", x, y)
+    def __init__(self, supply_type, center_x, center_y):
+        Sprite.__init__(self, "supply", center_x, center_y)
         self.got = False
         self.point(180)
         self.set_size_to(60)

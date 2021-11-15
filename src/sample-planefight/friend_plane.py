@@ -4,8 +4,8 @@ from pygamescratch import *
 
 
 class FriendPlane(Sprite):
-    def __init__(self, x, y):
-        Sprite.__init__(self, "friendplane", x, y)
+    def __init__(self, center_x, center_y):
+        Sprite.__init__(self, "friendplane", center_x, center_y)
         self.hp = 10
         self.set_size_to(60)
         self.switch_costume_to("a")
@@ -16,7 +16,7 @@ class FriendPlane(Sprite):
         schedule(g.friend_fire_wait, self.friend_fire, None)
 
     def friend_fire(self):
-        if g.hero is None:
+        if g.hero is None or g.hero.hp <= 0:
             return
         if self.hp <= 0:
             return
@@ -25,7 +25,7 @@ class FriendPlane(Sprite):
             if len(enemy_planes) > 0:
                 target_position = enemy_planes[0].rect.center
                 pygs.play_sound("hero_fire.wav")
-                self.single_fire(self.rect.midleft, target_position)
+                self.single_fire(self.rect.midtop, target_position)
         schedule(g.friend_fire_wait, self.friend_fire, None)
 
     def single_fire(self, start_position, target_position):
@@ -71,14 +71,14 @@ class FriendPlane(Sprite):
             return
         closest_enemy_bullet = self.get_closest_sprite_by_name("enemybullet")
         if closest_enemy_bullet:
-            distance = get_distance(closest_enemy_bullet.rect.center, self.rect.center)
+            distance = get_distance(closest_enemy_bullet.rect.center, (self.center_x, self.center_y))
             if distance <= 100:
-                if closest_enemy_bullet.rect.x >= self.rect.x:  # 如果子弹在右边
+                if closest_enemy_bullet.center_x >= self.center_x:  # 如果子弹在右边
                     if self.rect.x > -pygs.max_x / 2:  # 如果友机左边还有余地
                         self.point(270)
                     else:
                         self.point(90)
-                elif closest_enemy_bullet.rect.x <= self.rect.x:  # 如果子弹在左边
+                elif closest_enemy_bullet.center_x <= self.center_x:  # 如果子弹在左边
                     if self.rect.x < pygs.max_x / 2:  # 如果友机右边还有余地
                         self.point(90)
                     else:

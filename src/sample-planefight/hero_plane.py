@@ -2,8 +2,8 @@ from friend_plane import *
 
 
 class HeroPlane(Sprite):
-    def __init__(self):
-        Sprite.__init__(self, "hero", x=0, y=50)
+    def __init__(self, center_x, center_y):
+        Sprite.__init__(self, "hero", center_x=center_x, center_y=center_y)
         self.max_hero_bullets = 10
         self.hp = 5
         self.immune = False
@@ -24,7 +24,7 @@ class HeroPlane(Sprite):
             self.immune = False
             schedule(0.2, self.hero_down, None)
             self.switch_costume_to("hp0")
-            text("ending_text", "游戏结束，得分：{0}".format(g.score), x=-115, y=0, size=28, color=(255, 255, 255))
+            text("ending_text", "游戏结束，得分：{0}".format(g.score), x=115, y=pygs.screen_center_y, size=28, color=(255, 255, 255))
             friend_planes = get_sprites_by_name("friendplane")
             hero_bullets = get_sprites_by_name("herobullet")
             for s in list(friend_planes):
@@ -49,24 +49,24 @@ class HeroPlane(Sprite):
         y_speed = 3
         if is_key_pressed(g.DIRECTION_DOWN_KEY) and is_key_pressed(g.DIRECTION_LEFT_KEY):
             x = -x_speed
-            y = -y_speed
+            y = y_speed
         elif is_key_pressed(g.DIRECTION_DOWN_KEY) and is_key_pressed(g.DIRECTION_RIGHT_KEY):
             x = x_speed
-            y = -y_speed
+            y = y_speed
         elif is_key_pressed(g.DIRECTION_UP_KEY) and is_key_pressed(g.DIRECTION_LEFT_KEY):
             x = -x_speed
-            y = y_speed
+            y = -y_speed
         elif is_key_pressed(g.DIRECTION_UP_KEY) and is_key_pressed(g.DIRECTION_RIGHT_KEY):
             x = x_speed
-            y = y_speed
-        elif is_key_pressed(g.DIRECTION_DOWN_KEY):
             y = -y_speed
-        elif is_key_pressed(g.DIRECTION_UP_KEY):
+        elif is_key_pressed(g.DIRECTION_DOWN_KEY):
             y = y_speed
+        elif is_key_pressed(g.DIRECTION_UP_KEY):
+            y = -y_speed
         elif is_key_pressed(g.DIRECTION_LEFT_KEY):
-            x = -y_speed - 1
+            x = -x_speed - 1
         elif is_key_pressed(g.DIRECTION_RIGHT_KEY):
-            x = y_speed + 1
+            x = x_speed + 1
         self.change_x_by(x)
         self.change_y_by(y)
 
@@ -84,16 +84,16 @@ class HeroPlane(Sprite):
     def hero_single_fire(self):
         target_position = self._get_fire_target_position(g.FIRE_SINGLE_KEY, 0)
         if target_position is not None:
-            rect = self.rect
-            self._hero_fire(rect.midleft[0], rect.midleft[1], target_position[0], target_position[1])
+            midtop = self.rect.midtop
+            self._hero_fire(midtop[0], midtop[1], target_position[0], target_position[1])
 
     def hero_triple_fire(self):
         target_position = self._get_fire_target_position(g.FIRE_TRIPLE_KEY, 2)
         if target_position is not None:
             rect = self.rect
-            self._hero_fire(rect.midleft[0], rect.midleft[1], target_position[0], target_position[1])
-            self._hero_fire(rect.midtop[0], rect.midtop[1], target_position[0] + rect.width / 2, target_position[1])
-            self._hero_fire(rect.midtop[0] - rect.width, rect.midtop[1], target_position[0] - rect.width / 2, target_position[1])
+            self._hero_fire(rect.midtop[0], rect.midtop[1], target_position[0], target_position[1])
+            self._hero_fire(rect.midleft[0], rect.midleft[1], target_position[0] - rect.width / 2, target_position[1])
+            self._hero_fire(rect.midright[0], rect.midright[1], target_position[0] + rect.width / 2, target_position[1])
 
     def _hero_fire(self, x, y, target_x, target_y):
         bullets = get_sprites_by_name("herobullet")
@@ -115,8 +115,8 @@ class HeroPlane(Sprite):
     def hero_add_friend(self):
         if game_paused or self.hp < 5:
             return
-        x = random.randrange(-pygs.max_x, pygs.max_x)
-        y = -pygs.max_y + 25
+        x = random.randrange(0, pygs.max_x)
+        y = pygs.max_y - 25
         FriendPlane(x, y)
         self.hp = self.hp - 3
 
@@ -135,22 +135,22 @@ class HeroPlane(Sprite):
             self.showing = not self.showing
         else:
             self.show()
-        self._display_hero_bullet_score(pygs.max_x, pygs.max_y)
-        self._display_hero_hp(pygs.max_x, pygs.max_y)
+        self._display_hero_bullet_score()
+        self._display_hero_hp()
 
-    def _display_hero_hp(self, max_x, max_y):
+    def _display_hero_hp(self):
         # 显示血条
         hp_sprites = get_sprites_by_name("hp")
         if len(hp_sprites) <= 0:
-            x = -max_x + 10
+            x = 10
             for index in range(0, g.max_hp + 1):
-                Sprite("hp", x + index * 25, -max_y + 50)
+                Sprite("hp", x + index * 25, pygs.max_y - 50)
             hp_sprites = get_sprites_by_name("hp")
         for index in range(1, len(hp_sprites) + 1):
             hp_sprites[index - 1].showing = (index <= self.hp)
 
-    def _display_hero_bullet_score(self, max_x, max_y):
+    def _display_hero_bullet_score(self):
         display_text = "分数：{0}".format(g.score)
-        text("score_text", display_text, x=max_x - 110, y=-max_y + 30, size=22, color=(128, 128, 128))
+        text("score_text", display_text, x=pygs.max_x - 110, y=pygs.max_y - 30, size=22, color=(128, 128, 128))
         remaining_bullets = self.max_hero_bullets - len(get_sprites_by_name("herobullet"))
-        text("bullet_text", "弹药：{0}".format(remaining_bullets), x=-max_x + 5, y=-max_y + 30, size=18, color=(0, 0, 0))
+        text("bullet_text", "弹药：{0}".format(remaining_bullets), x=5, y=pygs.max_y - 30, size=18, color=(0, 0, 0))

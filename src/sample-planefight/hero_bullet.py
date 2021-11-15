@@ -2,8 +2,8 @@ from pygamescratch import *
 
 
 class HeroBullet(Sprite):
-    def __init__(self, x, y):
-        Sprite.__init__(self, "herobullet", x, y)
+    def __init__(self, center_x, center_y):
+        Sprite.__init__(self, "herobullet", center_x, center_y)
         self.set_size_to(50)
 
     def action(self):

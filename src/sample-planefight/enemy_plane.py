@@ -3,8 +3,8 @@ from supply import *
 
 
 class EnemyPlane(Sprite):
-    def __init__(self, enemy_type, x, y):
-        Sprite.__init__(self, "enemy" + str(enemy_type), x, y)
+    def __init__(self, enemy_type, center_x, center_y):
+        Sprite.__init__(self, "enemy" + str(enemy_type), center_x, center_y)
         self.hp = g.enemy_hp_rate * (enemy_type + 1) * 2
         self.enemy_type = enemy_type
         schedule(3, self.change_direction, None)
@@ -20,9 +20,9 @@ class EnemyPlane(Sprite):
         if g.enemy_new_wait > 0.05:
             g.enemy_new_wait = g.enemy_initial_new_wait - g.score * 2 / 100
         if self.enemy_type == 1:
-            Supply("bullet", self.rect.x, self.rect.y)
+            Supply("bullet", self.center_x, self.center_y)
         elif self.enemy_type == 2:
-            Supply("health", self.rect.x, self.rect.y)
+            Supply("health", self.center_x, self.center_y)
         schedule(0.2, self.delete, None)
 
     def action(self):
@@ -61,8 +61,8 @@ class EnemyPlane(Sprite):
         randint = random.randint(0, len(target_planes) - 1)
         target_position = target_planes[randint].rect.center
         pygs.play_sound("enemy_fire.wav")
-        start_middle = self.rect.midleft
-        start_right = self.rect.midtop
+        start_middle = self.rect.midtop
+        start_right = self.rect.midright
         if not self.enemy_type == 1:
             EnemyBullet(start_middle[0], start_middle[1] - self.rect.height, target_position[0], target_position[1])
         if not self.enemy_type == 0:
@@ -74,8 +74,8 @@ def create_enemy():
     if len(g.get_enemies()) >= g.max_enemies:
         schedule(g.enemy_new_wait, create_enemy, None)
         return
-    x = random.randrange(-pygs.max_x, pygs.max_x)
-    y = pygs.max_y
+    x = random.randrange(0, pygs.max_x)
+    y = 30
     enemy_type = g.pending_enemy_types.pop(0)
     EnemyPlane(enemy_type, x, y)
     refresh_enemy_icons()
@@ -86,8 +86,8 @@ def create_enemy():
 def refresh_enemy_icons():
     if len(g.pending_enemy_types) < 10:
         g.pending_enemy_types = g.pending_enemy_types + [0, 0, 0, 0, 1, 0, 0, 0, 1, 2]
-    x = -pygs.max_x + 10
-    y = pygs.max_y - 20
+    x = 10
+    y = 10
     enemy_icon_sprites = get_sprites_by_name("enemyicon")
     if len(enemy_icon_sprites) <= 0:
         for index in range(0, 10):

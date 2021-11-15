@@ -40,9 +40,10 @@ default_font_folder = "./font/"  # 默认字体文件夹
 default_sprite_image_folder = "./images/sprite/"  # 默认角色文件夹
 default_backdrop_image_folder = "./images/backdrop/"  # 默认字体文件夹
 default_backdrop_color = (255, 255, 255)  # 默认背景色
-max_x, max_y = (_default_screen_size[0] / 2, _default_screen_size[1] / 2)
 default_font_name = None  # 默认字体名称
 default_key_repeat_delay = 20  # 按压键盘重复触发key down事件的间隔
+max_x, max_y = _default_screen_size
+screen_center_x, screen_center_y = (max_x / 2, max_y / 2)
 
 # 以下是默认事件名称，可以引用
 EVENT_MOUSE_LEFT = "_EVENT_MOUSE_LEFT"
@@ -65,12 +66,15 @@ def screen_size(width, height):
     """
     global max_x
     global max_y
+    global screen_center_x
+    global screen_center_y
     global _default_screen_size
     _default_screen_size = (width, height)
-    max_x, max_y = (_default_screen_size[0] / 2, _default_screen_size[1] / 2)
+    max_x, max_y = _default_screen_size
+    screen_center_x, screen_center_y = (max_x / 2, max_y / 2)
 
 
-def text(text_id, text_str, x=-120, y=-120, size=40, color=(128, 128, 128)):
+def text(text_id, text_str, x, y, size=40, color=(128, 128, 128)):
     """
     添加一行文字，改文字会保存到一个列表当中，每次渲染的时候都会显示
     :param text_id: 文本id
@@ -209,7 +213,7 @@ def _update_screen():
     # draw all sprite
     for s in list(_sprites_in_game.values()):
         if not s.sprite.get_locked() and s.showing:
-            rect = pygame_rect(s.rect)
+            rect = s.rect
             if s.rotate_angle != 0:
                 new_sprite = pygame.transform.rotate(s.sprite, s.rotate_angle)
                 _screen.blit(new_sprite, rect)
@@ -221,18 +225,18 @@ def _update_screen():
             if s.text:
                 text_image = s.text['text_image']
                 text_rect = text_image.get_rect()
-                text_x = rect.x - text_rect.width / 2
-                text_y = rect.y - text_rect.height / 2
+                text_x = rect.x
+                text_y = rect.y
                 if text_x < 0:
-                    text_x = rect.x + text_rect.width / 2
+                    text_x = rect.x + text_rect.width
                 if s.text['bg_color']:
                     pygame.draw.circle(_screen, s.text['bg_color'], [text_x, text_y], text_rect.width / 2 + 2,
                                        text_rect.width + 2)
-                _screen.blit(text_image, (text_x - text_rect.width / 2, text_y - text_rect.height / 2))
+                _screen.blit(text_image, (text_x, text_y))
 
     for t in _texts.values():
-        start_x = t['x'] + max_x
-        start_y = max_y - t['y']
+        start_x = t['x']
+        start_y = t['y']
         _screen.blit(t['image'], (start_x, start_y))
 
     pygame.display.update()
@@ -370,9 +374,7 @@ def _get_events():
     global _game_running
     global mouse_position
     pos = pygame.mouse.get_pos()
-    mouse_x = pos[0] - max_x
-    mouse_y = max_y - pos[1]
-    mouse_position = mouse_x, mouse_y
+    mouse_position = (pos[0]), (pos[1])
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -503,26 +505,13 @@ def remove_backdrop(name):
         del _backdrops[name]
 
 
-def pygame_rect(target_rect):
-    """
-    获取pygame的rect对象，pygame最左上方的坐标是（0,0），而在本游戏中，中心点的坐标为（0,0），分为4个象限
-    pygame每个物体的坐标是指左上角，而本游戏坐标是指物体的中心
-    :param target_rect:
-    :return:
-    """
-    new_rect = target_rect.copy()
-    new_rect.x = new_rect.x + max_x - new_rect.width // 2
-    new_rect.y = max_y - new_rect.y - new_rect.height // 2
-    return new_rect
-
-
 class Sprite(object):
-    def __init__(self, sprite_name, x=0, y=0):
+    def __init__(self, sprite_name, center_x=0, center_y=0):
         """
         定义一个角色对象
         :param sprite_name: 角色名称，该名称也对应default_sprite_image_folder定义的文件夹下面的角色图片所在的文件夹
-        :param x:
-        :param y:
+        :param center_x:
+        :param center_y:
         """
         global _sprites_max_id
         _sprites_max_id = _sprites_max_id + 1
@@ -553,10 +542,12 @@ class Sprite(object):
         self.sprite = self.proto_sprite
 
         self.rect = self.sprite.get_rect()  # rect(1,2,3,4) #  self.sprite.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.float_x = x  # 存这个浮点数的原因是，pygame里面的坐标是整数，如果改变坐标的值小于1，那么里面的坐标实际上不会移动
-        self.float_y = y
+        width = self.rect.width
+        height = self.rect.height
+        self.rect.x = center_x - width / 2
+        self.rect.y = center_y - height / 2
+        self.center_x = center_x  # 存这个浮点数的原因是，pygame里面的坐标是整数，如果改变坐标的值小于1，那么里面的坐标实际上不会移动
+        self.center_y = center_y  # 还有一个原因是，坐标都是角色左上角的位置，但是角度计算都是计算角色中心点，存这2个值方便计算
         self.rotate_angle = 0
 
         _sprites_in_game[self.id] = self
@@ -573,7 +564,7 @@ class Sprite(object):
 
         steps_x = steps * round(math.cos(direction_pi), 15)
         steps_y = steps * round(math.sin(direction_pi), 15)
-        self.go_to(self.float_x + steps_x, self.float_y + steps_y)
+        self.go_to(self.center_x + steps_x, self.center_y + steps_y)
 
     def turn_right(self, degrees):
         """
@@ -625,14 +616,14 @@ class Sprite(object):
         """
         self.direction = direction
 
-    def point_to(self, x, y):
+    def point_to(self, center_x, center_y):
         """
         指向特定坐标
-        :param x:
-        :param y:
+        :param center_x:
+        :param center_y:
         :return:
         """
-        direction_pi = math.atan2(y - self.rect.y, x - self.rect.x)
+        direction_pi = math.atan2(center_y - self.center_y, center_x - self.center_x)
         self.direction = (direction_pi * 180) / math.pi
         self.direction = 90 - self.direction
 
@@ -642,7 +633,7 @@ class Sprite(object):
         :param target_sprite:
         :return:
         """
-        self.point_to(target_sprite.rect.center[0],target_sprite.rect.center[1])
+        self.point_to(target_sprite.center_x, target_sprite.center_y)
 
     def point_towards_mouse_pointer(self):
         """
@@ -659,8 +650,7 @@ class Sprite(object):
         :param change_x: 要调整的值
         :return:
         """
-        self.float_x = self.float_x + change_x
-        self.rect.x = self.rect.x + change_x
+        self.center_x = self.center_x + change_x
         self._adjust_position()
 
     def set_x_to(self, new_x):
@@ -669,8 +659,7 @@ class Sprite(object):
         :param new_x: 要设置的新值
         :return:
         """
-        self.float_x = new_x
-        self.rect.x = new_x
+        self.center_x = new_x
         self._adjust_position()
 
     def change_y_by(self, change_y):
@@ -679,8 +668,7 @@ class Sprite(object):
         :param change_y: 要调整的值
         :return:
         """
-        self.float_y = self.float_y + change_y
-        self.rect.y = self.rect.y + change_y
+        self.center_y = self.center_y + change_y
         self._adjust_position()
 
     def set_y_to(self, new_y):
@@ -689,8 +677,7 @@ class Sprite(object):
         :param new_y: 要设置的新值
         :return:
         """
-        self.float_y = new_y
-        self.rect.y = new_y
+        self.center_y = new_y
         self._adjust_position()
 
     def touching_edge(self):
@@ -698,7 +685,7 @@ class Sprite(object):
         判断是否在边缘
         :return:
         """
-        if self.rect.x >= max_x or self.rect.x <= -max_x or self.rect.y >= max_y or self.rect.y <= -max_y:
+        if self.rect.x >= max_x - self.rect.width or self.rect.x <= 0 or self.rect.y >= max_y - self.rect.height or self.rect.y <= 0:
             return True
         return False
 
@@ -707,26 +694,30 @@ class Sprite(object):
         如果碰到边缘就反弹
         :return:
         """
-        if self.rect.x >= max_x:
+        if self.rect.x >= max_x - self.rect.width:
             self.direction = -self.direction
             self.flip()
-        elif self.rect.x <= -max_x:
+        elif self.rect.x <= 0:
             self.direction = -self.direction
             self.flip()
-        elif self.rect.y >= max_y:
+        elif self.rect.y >= max_y - self.rect.height:
             self.direction = 180 - self.direction
-        elif self.rect.y <= -max_y:
+        elif self.rect.y <= 0:
             self.direction = 180 - self.direction
 
     def _adjust_position(self):
-        if self.rect.x > max_x:
-            self.rect.x = max_x
-        if self.rect.x < -max_x:
-            self.rect.x = -max_x
-        if self.rect.y > max_y:
-            self.rect.y = max_y
-        if self.rect.y < -max_y:
-            self.rect.y = -max_y
+        max_center_x = max_x - self.rect.width / 2
+        max_center_y = max_y - self.rect.height / 2
+        if self.center_x > max_center_x:
+            self.center_x = max_center_x
+        if self.center_x < self.rect.width / 2:
+            self.center_x = self.rect.width / 2
+        if self.center_y > max_center_y:
+            self.center_y = max_center_y
+        if self.center_y < self.rect.height / 2:
+            self.center_y = self.rect.height / 2
+        self.rect.x = self.center_x - self.rect.width / 2
+        self.rect.y = self.center_y - self.rect.height / 2
 
     def flip(self):
         """
@@ -931,10 +922,10 @@ class Sprite(object):
         :return:
         """
         sprites = []
-        self_pygame_rect = pygame_rect(self.rect)
+        self_pygame_rect = self.rect
         for sprite in list(_sprites_in_game.values()):
             if sprite.sprite_name == sprite_name:
-                if pygame.Rect.colliderect(self_pygame_rect, pygame_rect(sprite.rect)):
+                if pygame.Rect.colliderect(self_pygame_rect, sprite.rect):
                     sprites.append(sprite)
         return sprites
 
@@ -955,10 +946,9 @@ class Sprite(object):
         """
         min_distance = 9999
         closest_sprite = None
-        self_point = (self.rect.center[0], self.rect.center[1])
+        self_point = (self.center_x, self.center_y)
         for sprite in sprites:
-            target_position = sprite.rect.center
-            distance = get_distance(self_point, (target_position[0], target_position[1]))
+            distance = get_distance(self_point, (sprite.center_x, sprite.center_y))
             if min_distance > distance:
                 min_distance = distance
                 closest_sprite = sprite

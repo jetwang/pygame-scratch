@@ -7,7 +7,6 @@ class Cat(Sprite):
     def action(self):
         self.move(1)
         print(self.rect)
-        print(pygame_rect(self.rect))
         balls = self.get_touching_sprite("ball")
         if len(balls) > 0:
             ball = balls[0]
