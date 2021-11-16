@@ -32,15 +32,15 @@ python plane_fight.py
 Sprite类
     
     class Sprite(builtins.object)
-     |  Sprite(sprite_name, x=0, y=0)
+     |  Sprite(sprite_name, center_x=0, center_y=0)
      |  
      |  Methods defined here:
      |  
-     |  __init__(self, sprite_name, x=0, y=0)
+     |  __init__(self, sprite_name, center_x=0, center_y=0)
      |      定义一个角色对象
      |      :param sprite_name: 角色名称，该名称也对应default_sprite_image_folder定义的文件夹下面的角色图片所在的文件夹
-     |      :param x:
-     |      :param y:
+     |      :param center_x:
+     |      :param center_y:
      |  
      |  action(self)
      |      角色在每帧的活动情况，比如如果希望角色不断移动1步，就可以重载这个方法，里面加入self.move(1)的代码
@@ -136,14 +136,19 @@ Sprite类
      |      :return:
      |  
      |  point(self, direction)
-     |      指向特定角度，正上方为0度，正右为90度，正下180度，正左为270度。
+     |      指向特定角度，正右为0度，按照顺时针累加，正上为-90度，正下90度，正左为180度或-180度。
      |      :param direction:
      |      :return:
      |  
-     |  point_to(self, x, y)
+     |  point_to(self, center_x, center_y)
      |      指向特定坐标
-     |      :param x:
-     |      :param y:
+     |      :param center_x:
+     |      :param center_y:
+     |      :return:
+     |  
+     |  point_to_sprite(self, target_sprite)
+     |      指定特定角色
+     |      :param target_sprite:
      |      :return:
      |  
      |  point_towards_mouse_pointer(self)
@@ -244,10 +249,17 @@ Sprite类
      |      :return:
      |  
      |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
 
-全局函数
+FUNCTIONS
 
-    add_backdrop(name)
+    add_backdrop(name, moving_x=0, moving_y=0)
         增加背景
         :param name: 背景文件路径，可以传入完整路径，也可以只传入背景文件名，程序会自动到default_backdrop_image_folder定义的文件夹中找到以jpg结尾的同名的图片
         :return:
@@ -302,7 +314,7 @@ Sprite类
         打印出异常信息
         :param e: 异常
         :return:
-     
+    
     refresh_events()
         刷新事件列表，前一帧之前触发的事件都会被清除，不管有没有触发过
     
@@ -331,6 +343,12 @@ Sprite类
         :param kwargs:  关键字参数
         :return:
     
+    screen_size(width, height)
+        修改屏幕大小
+        :param width:
+        :param height:
+        :return:
+    
     start()
         开始游戏，该方法会初始化pygame，并且做两件事情，
         一是在主线程循环获取键盘和鼠标事件，并触发相应事件监听器
@@ -342,7 +360,7 @@ Sprite类
         :param name:
         :return:
     
-    text(text_id, text_str, x=-120, y=-120, size=40, color=(128, 128, 128))
+    text(text_id, text_str, x, y, size=40, color=(128, 128, 128))
         添加一行文字，改文字会保存到一个列表当中，每次渲染的时候都会显示
         :param text_id: 文本id
         :param text_str: 要显示的字符串
