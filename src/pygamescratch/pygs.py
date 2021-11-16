@@ -715,10 +715,8 @@ class Sprite(object):
         """
         if self.rect.x >= max_x - self.rect.width:
             self.direction = 180 - self.direction
-            self.flip()
         elif self.rect.x <= 0:
             self.direction = 180 - self.direction
-            self.flip()
         elif self.rect.y >= max_y - self.rect.height:
             self.direction = - self.direction
         elif self.rect.y <= 0:
@@ -820,6 +818,8 @@ class Sprite(object):
         self.sprite = pygame.transform.smoothscale(self.proto_sprite, (new_width, new_height))
         self.rect.width = new_width
         self.rect.height = new_height
+        self.rect.x = self.center_x - new_width / 2
+        self.rect.y = self.center_y - new_height / 2
         self.size = num
 
     def change_size_by(self, size_by):

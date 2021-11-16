@@ -3,7 +3,8 @@ from friend_plane import *
 
 class HeroPlane(Sprite):
     def __init__(self, center_x, center_y):
-        Sprite.__init__(self, "hero", center_x=center_x, center_y=center_y)
+        Sprite.__init__(self, "hero", center_x, center_y)
+        self.set_size_to(50)
         self.max_hero_bullets = 10
         self.hp = 5
         self.immune = False
@@ -14,7 +15,6 @@ class HeroPlane(Sprite):
         self.when_key_up(g.CALL_FRIEND_KEY, self.hero_add_friend)
         schedule(0, self.hero_single_fire, 0.15)
         schedule(0, self.hero_triple_fire, 0.25)
-        self.set_size_to(50)
 
     def got_hit(self):
         self.immune = True

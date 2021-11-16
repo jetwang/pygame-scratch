@@ -2,11 +2,20 @@ from pygamescratch import *
 
 
 class EnemyBullet(Sprite):
-    def __init__(self, center_x, center_y, target_x, target_y):
+    def __init__(self, center_x, center_y, target_x, target_y, enemy_type):
         Sprite.__init__(self, "enemybullet", center_x, center_y)
-        self.move_speed = 3
+        if enemy_type == 0:
+            self.set_size_to(50)
+            self.switch_costume_to("bullet1")
+            self.move_speed = 3
+        elif enemy_type == 1:
+            self.set_size_to(80)
+            self.move_speed = 4
+        elif enemy_type == 2:
+            self.set_size_to(100)
+            self.move_speed = 5
         self.point_to(target_x, target_y)
-        self.set_size_to(50)
+        self.rotate_angle = 90 - self.direction
 
     def action(self):
         if self.showing and not self.hit():

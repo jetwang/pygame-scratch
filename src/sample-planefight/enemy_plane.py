@@ -61,13 +61,13 @@ class EnemyPlane(Sprite):
         randint = random.randint(0, len(target_planes) - 1)
         target_position = target_planes[randint].rect.center
         pygs.play_sound("enemy_fire.wav")
-        start_middle = self.rect.midtop
+        start_middle = self.rect.midbottom
         start_right = self.rect.midright
         if not self.enemy_type == 1:
-            EnemyBullet(start_middle[0], start_middle[1] - self.rect.height, target_position[0], target_position[1])
+            EnemyBullet(start_middle[0], start_middle[1], target_position[0], target_position[1], self.enemy_type)
         if not self.enemy_type == 0:
-            EnemyBullet(start_right[0], start_right[1] - 10, target_position[0], target_position[1])
-            EnemyBullet(start_right[0] - self.rect.width, start_right[1] - 10, target_position[0], target_position[1])
+            EnemyBullet(start_right[0], start_right[1] + 10, target_position[0], target_position[1], self.enemy_type)
+            EnemyBullet(start_right[0] - self.rect.width, start_right[1] + 10, target_position[0], target_position[1], self.enemy_type)
 
 
 def create_enemy():
