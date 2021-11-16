@@ -6,7 +6,7 @@ class Supply(Sprite):
     def __init__(self, supply_type, center_x, center_y):
         Sprite.__init__(self, "supply", center_x, center_y)
         self.got = False
-        self.point(180)
+        self.point(90)
         self.set_size_to(60)
         self.switch_costume_to(supply_type + "_supply")
         self.supply_type = supply_type
@@ -14,7 +14,7 @@ class Supply(Sprite):
     def action(self):
         if self.showing:
             if self.got:
-                self.point_to(-pygs.max_x, -pygs.max_y)
+                self.point_to(0, pygs.max_y)
                 self.move(8)
             else:
                 self.move(1)

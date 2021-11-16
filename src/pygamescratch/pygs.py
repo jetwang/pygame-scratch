@@ -206,8 +206,8 @@ def _update_screen():
     if not _game_running:
         return
     # draw back ground
-    if _current_backdrop and _current_backdrop.get_locked() is not True:
-        _screen.blit(_current_backdrop, (0, 0))
+    if _current_backdrop:
+        _display_backdrop(_screen, _current_backdrop)
     else:
         _screen.fill(default_backdrop_color)
     # draw all sprite
@@ -240,6 +240,28 @@ def _update_screen():
         _screen.blit(t['image'], (start_x, start_y))
 
     pygame.display.update()
+
+
+def _display_backdrop(screen, backdrop):
+    image_ = backdrop["image"]
+    if image_.get_locked():
+        return
+    screen.blit(image_, (backdrop["x"], backdrop["y"]))
+    rect = image_.get_rect()
+    if backdrop["x"] < 0 and backdrop["x"] + rect.width < max_x:
+        screen.blit(image_, (backdrop["x"] + rect.width, backdrop["y"]))
+    if backdrop["x"] > 0:
+        screen.blit(image_, (backdrop["x"] - rect.width, backdrop["y"]))
+    if backdrop["y"] < 0 and backdrop["y"] + rect.height < max_y:
+        screen.blit(image_, (backdrop["x"], backdrop["y"] + rect.height))
+    if backdrop["y"] > 0:
+        screen.blit(image_, (backdrop["x"], backdrop["y"] - rect.height))
+    backdrop["x"] = backdrop["x"] + backdrop["moving_x"]
+    backdrop["y"] = backdrop["y"] + backdrop["moving_y"]
+    if backdrop["x"] < -rect.width or backdrop["x"] > rect.width:
+        backdrop["x"] = 0
+    if backdrop["y"] < -rect.height or backdrop["y"] > rect.height:
+        backdrop["y"] = 0
 
 
 def _frame_loop():
@@ -436,7 +458,7 @@ def start():
             print_exception(e)
 
 
-def add_backdrop(name):
+def add_backdrop(name, moving_x=0, moving_y=0):
     """
     增加背景
     :param name: 背景文件路径，可以传入完整路径，也可以只传入背景文件名，程序会自动到default_backdrop_image_folder定义的文件夹中找到以jpg结尾的同名的图片
@@ -446,14 +468,14 @@ def add_backdrop(name):
     global _backdrop_key
     global _backdrops
     if os.path.exists(name):
-        new_backdrop = pygame.image.load(name).convert_alpha()
+        backdrop_image = pygame.image.load(name).convert_alpha()
     else:
         if not name.endswith(".jpg"):
             path = default_backdrop_image_folder + name + ".jpg"
-            new_backdrop = pygame.image.load(path).convert_alpha()
-
-    _backdrops[name] = new_backdrop
-    _current_backdrop = new_backdrop
+            backdrop_image = pygame.image.load(path).convert_alpha()
+    backdrop = {"x": 0, "y": 0, "image": backdrop_image, "moving_x": moving_x, "moving_y": moving_y}
+    _backdrops[name] = backdrop
+    _current_backdrop = backdrop
     _backdrop_key = name
 
 
@@ -518,7 +540,7 @@ class Sprite(object):
         self.id = sprite_name + str(_sprites_max_id)
         self.sprite_name = sprite_name
         self.size = 100
-        self.direction = 90
+        self.direction = 0
         self.timer_start = time.perf_counter()
         self.event_watcher = {}
         self.costume = {}
@@ -531,8 +553,7 @@ class Sprite(object):
 
         for file_name in os.listdir(sprite_image_name):
             file_name_key = os.path.splitext(file_name)[0]
-            self.costume[file_name_key] = os.path.join(sprite_image_name,
-                                                       file_name)  # open(os.path.join(name,file_name), 'r')
+            self.costume[file_name_key] = os.path.join(sprite_image_name, file_name)  # open(os.path.join(name,file_name), 'r')
 
         current_costume = list(self.costume.items())[0]
         self.current_costume_key = current_costume[0]
@@ -559,11 +580,10 @@ class Sprite(object):
         :param steps:
         :return:
         """
-        direction = 90 - self.direction
-        direction_pi = math.pi * (direction / 180)  # to π
+        direction_pi = math.pi * (self.direction / 180)  # to π
 
-        steps_x = steps * round(math.cos(direction_pi), 15)
-        steps_y = steps * round(math.sin(direction_pi), 15)
+        steps_x = steps * math.cos(direction_pi)
+        steps_y = steps * math.sin(direction_pi)
         self.go_to(self.center_x + steps_x, self.center_y + steps_y)
 
     def turn_right(self, degrees):
@@ -597,8 +617,8 @@ class Sprite(object):
         移到窗口内随机位置
         :return:
         """
-        random_x = random.randint(-max_x, max_x)
-        random_y = random.randint(-max_y, max_y)
+        random_x = random.randint(0, max_x)
+        random_y = random.randint(0, max_y)
         self.go_to(random_x, random_y)
 
     def go_to_mouse_pointer(self):
@@ -610,7 +630,7 @@ class Sprite(object):
 
     def point(self, direction):
         """
-        指向特定角度，正上方为0度，正右为90度，正下180度，正左为270度。
+        指向特定角度，正右为0度，按照顺时针累加，正上为-90度，正下90度，正左为180度或-180度。
         :param direction:
         :return:
         """
@@ -625,7 +645,6 @@ class Sprite(object):
         """
         direction_pi = math.atan2(center_y - self.center_y, center_x - self.center_x)
         self.direction = (direction_pi * 180) / math.pi
-        self.direction = 90 - self.direction
 
     def point_to_sprite(self, target_sprite):
         """
@@ -695,15 +714,15 @@ class Sprite(object):
         :return:
         """
         if self.rect.x >= max_x - self.rect.width:
-            self.direction = -self.direction
+            self.direction = 180 - self.direction
             self.flip()
         elif self.rect.x <= 0:
-            self.direction = -self.direction
+            self.direction = 180 - self.direction
             self.flip()
         elif self.rect.y >= max_y - self.rect.height:
-            self.direction = 180 - self.direction
+            self.direction = - self.direction
         elif self.rect.y <= 0:
-            self.direction = 180 - self.direction
+            self.direction = - self.direction
 
     def _adjust_position(self):
         max_center_x = max_x - self.rect.width / 2

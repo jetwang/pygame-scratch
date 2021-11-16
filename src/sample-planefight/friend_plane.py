@@ -74,13 +74,13 @@ class FriendPlane(Sprite):
             distance = get_distance(closest_enemy_bullet.rect.center, (self.center_x, self.center_y))
             if distance <= 100:
                 if closest_enemy_bullet.center_x >= self.center_x:  # 如果子弹在右边
-                    if self.rect.x > -pygs.max_x / 2:  # 如果友机左边还有余地
-                        self.point(270)
+                    if self.rect.x > pygs.max_x / 4:  # 如果友机左边还有余地
+                        self.point(180)
                     else:
-                        self.point(90)
+                        self.point(0)
                 elif closest_enemy_bullet.center_x <= self.center_x:  # 如果子弹在左边
-                    if self.rect.x < pygs.max_x / 2:  # 如果友机右边还有余地
-                        self.point(90)
+                    if self.rect.x < pygs.max_x / 4:  # 如果友机右边还有余地
+                        self.point(0)
                     else:
-                        self.point(270)
+                        self.point(180)
         schedule(g.friend_change_direction_wait, self.change_direction, None)

@@ -29,7 +29,7 @@ def change_game_paused_state():
 
 
 def create_sprites():
-    add_backdrop("images/backdrop/background.png")
+    add_backdrop("images/backdrop/background.png", moving_y=1)
     pygame.display.set_caption("飞机大战")
     background_music_load("PlaneWarsBackgroundMusic.mp3")
     when_key_up(g.PAUSE_KEY, change_game_paused_state)
