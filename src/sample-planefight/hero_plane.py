@@ -15,7 +15,7 @@ class HeroPlane(Sprite):
         self.regist_event(EVENT_MOUSE_MIDDLE, self.hero_add_friend)
         self.when_key_up(CALL_FRIEND_KEY, self.hero_add_friend)
         pygs.schedule(0, self.hero_single_fire, 0.15)
-        pygs.schedule(0, self.hero_triple_fire, 0.25)
+        pygs.schedule(0, self.hero_triple_fire, 0.2)
 
     def got_hit(self):
         self.immune = True
@@ -75,7 +75,7 @@ class HeroPlane(Sprite):
         if self.hp > 0:
             if pygs.is_key_pressed(fire_key):
                 # 自动瞄准最近敌人
-                closest_enemy = self.get_closest_sprite(get_enemies())
+                closest_enemy = self.get_closest_sprite(g.get_enemies())
                 if closest_enemy:
                     return closest_enemy.rect.center
             elif pygame.mouse.get_pressed()[pressed_mouse_key_index]:
@@ -97,13 +97,15 @@ class HeroPlane(Sprite):
             self._hero_fire(rect.midright[0], rect.midright[1], target_position[0] + rect.width / 2, target_position[1])
 
     def _hero_fire(self, x, y, target_x, target_y):
-        bullets = pygs.get_sprites_by_name("herobullet")
-        if len(bullets) >= self.max_hero_bullets:
+        hero_bullets = g.get_hero_bullets()
+        if len(hero_bullets) >= self.max_hero_bullets:
             return
         pygs.play_sound("hero_fire.wav")
-        hero_bullet = HeroBullet(x, y)
+        hero_bullet = HeroBullet(x, y, BULLET_TYPE_HERO)
         hero_bullet.point_to(target_x, target_y)
         hero_bullet.switch_costume_to("bullet")
+
+
 
     def add_hp(self):
         if self.hp < g.max_hp:
@@ -138,5 +140,3 @@ class HeroPlane(Sprite):
             self.show()
         g.display_hero_bullet_score()
         g.display_hero_hp()
-
-

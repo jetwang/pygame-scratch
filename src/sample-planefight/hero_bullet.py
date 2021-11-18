@@ -1,14 +1,24 @@
-from pygamescratch import *
+from global_var import *
 
 
 class HeroBullet(Sprite):
-    def __init__(self, center_x, center_y):
+    def __init__(self, center_x, center_y, bullet_type, target_sprite=None):
         Sprite.__init__(self, "herobullet", center_x, center_y)
-        self.set_size_to(50)
+        self.bullet_type = bullet_type
+        self.target_sprite = target_sprite
+        if bullet_type == BULLET_TYPE_HERO:
+            self.set_size_to(50)
+        else:
+            self.set_size_to(35)
 
     def action(self):
         if self.showing and not self.hit():
-            self.move(7)
+            if self.bullet_type == BULLET_TYPE_HERO:
+                self.move(7 + g.max_bullets / 10)
+            else:
+                if self.target_sprite and self.target_sprite.hp > 0:
+                    self.point_to(self.target_sprite.center_x, self.target_sprite.center_y)
+                self.move(8)
             if self.touching_edge():
                 self.delete()
 

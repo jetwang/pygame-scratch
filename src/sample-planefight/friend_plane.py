@@ -26,11 +26,11 @@ class FriendPlane(Sprite):
             if len(enemy_planes) > 0:
                 target_position = enemy_planes[0].rect.center
                 pygs.play_sound("hero_fire.wav")
-                self.single_fire(self.rect.midtop, target_position)
+                self.single_fire(self.rect.midtop, target_position, enemy_planes[0])
         pygs.schedule(g.friend_fire_wait, self.friend_fire, None)
 
-    def single_fire(self, start_position, target_position):
-        hero_bullet = HeroBullet(start_position[0], start_position[1])
+    def single_fire(self, start_position, target_position, target_enemy):
+        hero_bullet = HeroBullet(start_position[0], start_position[1], BULLET_TYPE_FRIEND, target_sprite=target_enemy)
         hero_bullet.point_to(target_position[0], target_position[1])
 
     def friend_down(self):
