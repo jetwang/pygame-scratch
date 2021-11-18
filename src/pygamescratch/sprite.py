@@ -1,6 +1,6 @@
 import random
 
-from .pygs import *
+from pygamescratch.pygs import *
 
 
 class Sprite(object):

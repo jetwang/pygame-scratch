@@ -1,7 +1,6 @@
 from pygame.color import THECOLORS
 
 from pygamescratch import *
-from pygamescratch.sprite import Sprite
 
 
 class Cat(Sprite):
@@ -23,5 +22,5 @@ def start_up():
 if __name__ == "__main__":
     pygs.screen_size(1000, 500)
     pygs.default_backdrop_color = THECOLORS["white"]
-    regist_global_event(EVENT_START, start_up)
-    start()
+    pygs.regist_global_event(EVENT_START, start_up)
+    pygs.start()

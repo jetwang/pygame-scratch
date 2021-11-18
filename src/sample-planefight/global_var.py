@@ -39,6 +39,7 @@ class GlobalV:
         if self.hero is None:
             return
         # 显示血条
+        hero_hp = self.hero.hp
         hp_sprites = pygs.get_sprites_by_name("hp")
         if len(hp_sprites) <= 0:
             x = 10
@@ -46,14 +47,15 @@ class GlobalV:
                 Sprite("hp", x + index * 25, pygs.max_y - 50)
             hp_sprites = pygs.get_sprites_by_name("hp")
         for index in range(1, len(hp_sprites) + 1):
-            hp_sprites[index - 1].showing = (index <= self.hero.hp)
+            hp_sprites[index - 1].showing = (index <= hero_hp)
 
     def display_hero_bullet_score(self):
         if self.hero is None:
             return
+        max_hero_bullets = self.hero.max_hero_bullets
         display_text = "分数：{0}".format(self.score)
         pygs.text("score_text", display_text, x=pygs.max_x - 110, y=pygs.max_y - 30, size=22, color=(128, 128, 128))
-        remaining_bullets = self.hero.max_hero_bullets - len(pygs.get_sprites_by_name("herobullet"))
+        remaining_bullets = max_hero_bullets - len(pygs.get_sprites_by_name("herobullet"))
         pygs.text("bullet_text", "弹药：{0}".format(remaining_bullets), x=5, y=pygs.max_y - 30, size=18, color=(0, 0, 0))
 
     def get_enemies(self):

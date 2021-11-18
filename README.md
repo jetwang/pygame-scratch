@@ -26,10 +26,8 @@ python plane_fight.py
 ###  待改进
 1. pygame和scratch的坐标转换还有些问题
 
-### pygamescratch 接口使用手册：
-
-
-Sprite类
+### pygamescratch 接口使用手册： 
+    Help on class Sprite in module pygamescratch.sprite:
     
     class Sprite(builtins.object)
      |  Sprite(sprite_name, center_x=0, center_y=0)
@@ -256,128 +254,166 @@ Sprite类
      |  
      |  __weakref__
      |      list of weak references to the object (if defined)
+    
+    Help on PygameScratch in module pygamescratch.pygs object:
+    
+    class PygameScratch(builtins.object)
+     |  PygameScratch() -> None
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |  
+     |  add_backdrop(self, name, moving_x=0, moving_y=0)
+     |      增加背景
+     |      :param name: 背景文件路径，可以传入完整路径，也可以只传入背景文件名，程序会自动到default_backdrop_image_folder定义的文件夹中找到以jpg结尾的同名的图片
+     |      :param moving_x: 背景每帧x的变化值，可用来做移动背景
+     |      :param moving_y: 背景每帧y的变化值
+     |      :return:
+     |  
+     |  background_music_load(self, music_name)
+     |      载入背景音乐
+     |      :param music_name: 音乐文件的名称（包含扩展名），函数会自动在default_music_folder定义的文件夹下面寻找对应的音乐文件
+     |      :return:
+     |  
+     |  clear_backdrop(self)
+     |      删除所有背景
+     |      :return:
+     |  
+     |  clear_schedule(self)
+     |      删除所有定时器
+     |      :return:
+     |  
+     |  clear_sprites(self)
+     |      删除所有角色，请注意，角色的延时函数并不会被删除
+     |      :return:
+     |  
+     |  clear_text(self)
+     |      移除所有文字
+     |      :return:
+     |  
+     |  delete_delay_function_by_object(self, obj)
+     |      删除该角色下的所有定时任务
+     |      :param obj: 角色对象
+     |      :return:
+     |  
+     |  game_name(self, name)
+     |      设置游戏名称
+     |      :param name: 游戏名称
+     |      :return:
+     |  
+     |  get_distance(self, point1, point2)
+     |      获取两个坐标之间的距离
+     |      :param point1:
+     |      :param point2:
+     |      :return:
+     |  
+     |  get_sprites_by_name(self, sprite_name)
+     |      根据角色名称返回角色列表
+     |      :param sprite_name: 角色名称
+     |      :return: 对应名称的所有角色列表
+     |  
+     |  global_event(self, event_name, *args, **kwargs)
+     |      全局范围内触发事件
+     |      :param event_name: 触发事件名称
+     |      :param args: 要传入事件触发函数的可变参数
+     |      :param kwargs: 要传入事件触发函数的关键字参数
+     |      :return:
+     |  
+     |  is_key_pressed(self, key)
+     |      判断该键是否按住
+     |      :param key: 要判断的按键值
+     |      :return:
+     |  
+     |  next_backdrop(self)
+     |      下一个背景
+     |      :return:
+     |  
+     |  play_sound(self, sound)
+     |      播放音乐
+     |      :param sound: 音乐文件的名称（包含扩展名），函数会自动在default_music_folder定义的文件夹下面寻找对应的音乐文件
+     |      :return:
+     |  
+     |  print_exception(self, e)
+     |      打印出异常信息
+     |      :param e: 异常
+     |      :return:
+     |  
+     |  refresh_events(self)
+     |      刷新事件列表，前一帧之前触发的事件都会被清除，不管有没有触发过
+     |  
+     |  regist_global_event(self, event_name, func)
+     |      全局范围内注册事件监听器
+     |      :param event_name: 监听的事件名称
+     |      :param func: 待触发的函数
+     |      :return:
+     |  
+     |  remove_backdrop(self, name)
+     |      删除背景
+     |      :param name:
+     |      :return:
+     |  
+     |  remove_text(self, text_id)
+     |      移除文字
+     |      :param text_id: 要移除的文字id
+     |      :return:
+     |  
+     |  schedule(self, delay_seconds, func, repeat_interval, *args, **kwargs)
+     |      延迟执行函数
+     |      :param delay_seconds: 等待时长
+     |      :param func:  执行的函数对象
+     |      :param repeat_interval: 重复执行间隔，如果为None或者不大于0，只执行一次
+     |      :param args:  传入的无名参数
+     |      :param kwargs:  关键字参数
+     |      :return:
+     |  
+     |  screen_size(self, width, height)
+     |      修改屏幕大小
+     |      :param width:
+     |      :param height:
+     |      :return:
+     |  
+     |  start(self)
+     |      开始游戏，该方法会初始化pygame，并且做两件事情，
+     |      一是在主线程循环获取键盘和鼠标事件，并触发相应事件监听器
+     |      二是启动一个线程，该线程会每帧重复执行：清除过期事件、执行角色活动、执行定时任务、渲染窗口，
+     |      :return:
+     |  
+     |  switch_backdrop(self, name)
+     |      切换背景
+     |      :param name:
+     |      :return:
+     |  
+     |  text(self, text_id, text_str, x, y, size=40, color=(128, 128, 128))
+     |      添加一行文字，改文字会保存到一个列表当中，每次渲染的时候都会显示
+     |      :param text_id: 文本id
+     |      :param text_str: 要显示的字符串
+     |      :param x: 第一个文字的x坐标
+     |      :param y: 第一个文字的y坐标
+     |      :param size: 字体大小
+     |      :param color: 字体颜色
+     |      :return: 返回该文本对象，输入的参数都成为该对象的属性
+     |  
+     |  when_key_pressed(self, key_name, func)
+     |      注册按键事件监听器
+     |      :param key_name: 监听的按键值
+     |      :param func: 待触发的函数
+     |      :return:
+     |  
+     |  when_key_up(self, key_name, func)
+     |      注册松开按键事件
+     |      :param key_name: 监听的松开的按键值
+     |      :param func: 待触发的函数
+     |      :return:
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+    
 
-FUNCTIONS
-
-    add_backdrop(name, moving_x=0, moving_y=0)
-        增加背景
-        :param name: 背景文件路径，可以传入完整路径，也可以只传入背景文件名，程序会自动到default_backdrop_image_folder定义的文件夹中找到以jpg结尾的同名的图片
-        :return:
-    
-    background_music_load(music_name)
-        载入背景音乐
-        :param music_name: 音乐文件的名称（包含扩展名），函数会自动在default_music_folder定义的文件夹下面寻找对应的音乐文件
-        :return:
-    
-    clear_text()
-        移除所有文字
-        :return:
-    
-    game_name(name)
-        设置游戏名称
-        :param name: 游戏名称
-        :return:
-    
-    get_distance(point1, point2)
-        获取两个坐标之间的距离
-        :param point1:
-        :param point2:
-        :return:
-    
-    get_sprites_by_name(sprite_name)
-        根据角色名称返回角色列表
-        :param sprite_name: 角色名称
-        :return: 对应名称的所有角色列表
-    
-    global_event(event_name, *args, **kwargs)
-        全局范围内触发事件
-        :param event_name: 触发事件名称
-        :param args: 要传入事件触发函数的可变参数
-        :param kwargs: 要传入事件触发函数的关键字参数
-        :return:
-    
-    is_key_pressed(key)
-        判断该键是否按住
-        :param key: 要判断的按键值
-        :return:
-    
-    next_backdrop()
-        下一个背景
-        :return:
-    
-    play_sound(sound)
-        播放音乐
-        :param sound: 音乐文件的名称（包含扩展名），函数会自动在default_music_folder定义的文件夹下面寻找对应的音乐文件
-        :return:
-    
-    print_exception(e)
-        打印出异常信息
-        :param e: 异常
-        :return:
-    
-    refresh_events()
-        刷新事件列表，前一帧之前触发的事件都会被清除，不管有没有触发过
-    
-    regist_global_event(event_name, func)
-        全局范围内注册事件监听器
-        :param event_name: 监听的事件名称
-        :param func: 待触发的函数
-        :return:
-    
-    remove_backdrop(name)
-        删除背景
-        :param name:
-        :return:
-    
-    remove_text(text_id)
-        移除文字
-        :param text_id: 要移除的文字id
-        :return:
-    
-    schedule(delay_seconds, func, repeat_interval, *args, **kwargs)
-        延迟执行函数
-        :param delay_seconds: 等待时长
-        :param func:  执行的函数对象
-        :param repeat_interval: 重复执行间隔，如果为None或者不大于0，只执行一次
-        :param args:  传入的无名参数
-        :param kwargs:  关键字参数
-        :return:
-    
-    screen_size(width, height)
-        修改屏幕大小
-        :param width:
-        :param height:
-        :return:
-    
-    start()
-        开始游戏，该方法会初始化pygame，并且做两件事情，
-        一是在主线程循环获取键盘和鼠标事件，并触发相应事件监听器
-        二是启动一个线程，该线程会每帧重复执行：清除过期事件、执行角色活动、执行定时任务、渲染窗口，
-        :return:
-    
-    switch_backdrop(name)
-        切换背景
-        :param name:
-        :return:
-    
-    text(text_id, text_str, x, y, size=40, color=(128, 128, 128))
-        添加一行文字，改文字会保存到一个列表当中，每次渲染的时候都会显示
-        :param text_id: 文本id
-        :param text_str: 要显示的字符串
-        :param x: 第一个文字的x坐标
-        :param y: 第一个文字的y坐标
-        :param size: 字体大小
-        :param color: 字体颜色
-        :return: 返回该文本对象，输入的参数都成为该对象的属性
-    
-    when_key_pressed(key_name, func)
-        注册按键事件监听器
-        :param key_name: 监听的按键值
-        :param func: 待触发的函数
-        :return:
-    
-    when_key_up(key_name, func)
-        注册松开按键事件
-        :param key_name: 监听的松开的按键值
-        :param func: 待触发的函数
-        :return:

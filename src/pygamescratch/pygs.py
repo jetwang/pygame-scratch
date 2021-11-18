@@ -162,6 +162,11 @@ class PygameScratch:
                     self._delay_functions.remove(func_data)
 
     def delete_delay_function_by_object(self, obj):
+        """
+        删除该角色下的所有定时任务
+        :param obj: 角色对象
+        :return:
+        """
         for delay_function in list(self._delay_functions):
             if "__self__" in dir(delay_function[1]):
                 if obj == delay_function[1].__self__:
@@ -250,12 +255,13 @@ class PygameScratch:
             screen.blit(image_, (backdrop["x"], backdrop["y"] + rect.height))
         if backdrop["y"] > 0:
             screen.blit(image_, (backdrop["x"], backdrop["y"] - rect.height))
-        backdrop["x"] = backdrop["x"] + backdrop["moving_x"]
-        backdrop["y"] = backdrop["y"] + backdrop["moving_y"]
-        if backdrop["x"] < -rect.width or backdrop["x"] > rect.width:
-            backdrop["x"] = 0
-        if backdrop["y"] < -rect.height or backdrop["y"] > rect.height:
-            backdrop["y"] = 0
+        if not self.game_paused:
+            backdrop["x"] = backdrop["x"] + backdrop["moving_x"]
+            backdrop["y"] = backdrop["y"] + backdrop["moving_y"]
+            if backdrop["x"] < -rect.width or backdrop["x"] > rect.width:
+                backdrop["x"] = 0
+            if backdrop["y"] < -rect.height or backdrop["y"] > rect.height:
+                backdrop["y"] = 0
 
     def _frame_loop(self):
         while self._game_running:

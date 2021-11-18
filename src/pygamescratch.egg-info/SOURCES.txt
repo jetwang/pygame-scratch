@@ -4,7 +4,9 @@ README.md
 pyproject.toml
 setup.py
 src/pygamescratch/__init__.py
+src/pygamescratch/doc.py
 src/pygamescratch/pygs.py
+src/pygamescratch/sprite.py
 src/pygamescratch.egg-info/PKG-INFO
 src/pygamescratch.egg-info/SOURCES.txt
 src/pygamescratch.egg-info/dependency_links.txt
