@@ -1,5 +1,5 @@
-from pygamescratch import *
-import global_var as g
+from  global_var import *
+from pygamescratch.sprite import Sprite
 
 
 class Supply(Sprite):

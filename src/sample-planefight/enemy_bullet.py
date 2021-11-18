@@ -25,7 +25,7 @@ class EnemyBullet(Sprite):
 
     def hit_plane(self):
         self.switch_costume_to("hit")
-        schedule(0.2, self.delete, None)
+        pygs.schedule(0.2, self.delete, None)
 
     def hit(self):
         return self.current_costume_key == "hit"

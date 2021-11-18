@@ -1,4 +1,5 @@
 from friend_plane import *
+from pygamescratch.sprite import Sprite
 
 
 class HeroPlane(Sprite):
@@ -12,9 +13,9 @@ class HeroPlane(Sprite):
         self.regist_event(EVENT_MOUSE_LEFT, self.hero_single_fire)
         self.regist_event(EVENT_MOUSE_RIGHT, self.hero_triple_fire)
         self.regist_event(EVENT_MOUSE_MIDDLE, self.hero_add_friend)
-        self.when_key_up(g.CALL_FRIEND_KEY, self.hero_add_friend)
-        schedule(0, self.hero_single_fire, 0.15)
-        schedule(0, self.hero_triple_fire, 0.25)
+        self.when_key_up(CALL_FRIEND_KEY, self.hero_add_friend)
+        pygs.schedule(0, self.hero_single_fire, 0.15)
+        pygs.schedule(0, self.hero_triple_fire, 0.25)
 
     def got_hit(self):
         self.immune = True
@@ -22,18 +23,18 @@ class HeroPlane(Sprite):
         self.hp = self.hp - 1
         if self.hp <= 0:
             self.immune = False
-            schedule(0.2, self.hero_down, None)
+            pygs.schedule(0.2, self.hero_down, None)
             self.switch_costume_to("hp0")
-            text("ending_text", "游戏结束，得分：{0}".format(g.score), x=115, y=pygs.screen_center_y, size=28, color=(255, 255, 255))
-            friend_planes = get_sprites_by_name("friendplane")
-            hero_bullets = get_sprites_by_name("herobullet")
+            pygs.text("ending_text", "游戏结束，得分：{0}".format(g.score), x=115, y=pygs.screen_center_y, size=28, color=(255, 255, 255))
+            friend_planes = pygs.get_sprites_by_name("friendplane")
+            hero_bullets = pygs.get_sprites_by_name("herobullet")
             for s in list(friend_planes):
                 s.delete()
             for s in list(hero_bullets):
                 s.delete()
-            schedule(0.2, self.delete, None)
+            pygs.schedule(0.2, self.delete, None)
         else:
-            schedule(1, self.recover, None)
+            pygs.schedule(1, self.recover, None)
 
     def recover(self):
         self.immune = False
@@ -47,34 +48,34 @@ class HeroPlane(Sprite):
         y = 0
         x_speed = 2
         y_speed = 3
-        if is_key_pressed(g.DIRECTION_DOWN_KEY) and is_key_pressed(g.DIRECTION_LEFT_KEY):
+        if pygs.is_key_pressed(DIRECTION_DOWN_KEY) and pygs.is_key_pressed(DIRECTION_LEFT_KEY):
             x = -x_speed
             y = y_speed
-        elif is_key_pressed(g.DIRECTION_DOWN_KEY) and is_key_pressed(g.DIRECTION_RIGHT_KEY):
+        elif pygs.is_key_pressed(DIRECTION_DOWN_KEY) and pygs.is_key_pressed(DIRECTION_RIGHT_KEY):
             x = x_speed
             y = y_speed
-        elif is_key_pressed(g.DIRECTION_UP_KEY) and is_key_pressed(g.DIRECTION_LEFT_KEY):
+        elif pygs.is_key_pressed(DIRECTION_UP_KEY) and pygs.is_key_pressed(DIRECTION_LEFT_KEY):
             x = -x_speed
             y = -y_speed
-        elif is_key_pressed(g.DIRECTION_UP_KEY) and is_key_pressed(g.DIRECTION_RIGHT_KEY):
+        elif pygs.is_key_pressed(DIRECTION_UP_KEY) and pygs.is_key_pressed(DIRECTION_RIGHT_KEY):
             x = x_speed
             y = -y_speed
-        elif is_key_pressed(g.DIRECTION_DOWN_KEY):
+        elif pygs.is_key_pressed(DIRECTION_DOWN_KEY):
             y = y_speed
-        elif is_key_pressed(g.DIRECTION_UP_KEY):
+        elif pygs.is_key_pressed(DIRECTION_UP_KEY):
             y = -y_speed
-        elif is_key_pressed(g.DIRECTION_LEFT_KEY):
+        elif pygs.is_key_pressed(DIRECTION_LEFT_KEY):
             x = -x_speed - 1
-        elif is_key_pressed(g.DIRECTION_RIGHT_KEY):
+        elif pygs.is_key_pressed(DIRECTION_RIGHT_KEY):
             x = x_speed + 1
         self.change_x_by(x)
         self.change_y_by(y)
 
     def _get_fire_target_position(self, fire_key, pressed_mouse_key_index):
         if self.hp > 0:
-            if is_key_pressed(fire_key):
+            if pygs.is_key_pressed(fire_key):
                 # 自动瞄准最近敌人
-                closest_enemy = self.get_closest_sprite(g.get_enemies())
+                closest_enemy = self.get_closest_sprite(get_enemies())
                 if closest_enemy:
                     return closest_enemy.rect.center
             elif pygame.mouse.get_pressed()[pressed_mouse_key_index]:
@@ -82,13 +83,13 @@ class HeroPlane(Sprite):
         return None
 
     def hero_single_fire(self):
-        target_position = self._get_fire_target_position(g.FIRE_SINGLE_KEY, 0)
+        target_position = self._get_fire_target_position(FIRE_SINGLE_KEY, 0)
         if target_position is not None:
             midtop = self.rect.midtop
             self._hero_fire(midtop[0], midtop[1], target_position[0], target_position[1])
 
     def hero_triple_fire(self):
-        target_position = self._get_fire_target_position(g.FIRE_TRIPLE_KEY, 2)
+        target_position = self._get_fire_target_position(FIRE_TRIPLE_KEY, 2)
         if target_position is not None:
             rect = self.rect
             self._hero_fire(rect.midtop[0], rect.midtop[1], target_position[0], target_position[1])
@@ -96,7 +97,7 @@ class HeroPlane(Sprite):
             self._hero_fire(rect.midright[0], rect.midright[1], target_position[0] + rect.width / 2, target_position[1])
 
     def _hero_fire(self, x, y, target_x, target_y):
-        bullets = get_sprites_by_name("herobullet")
+        bullets = pygs.get_sprites_by_name("herobullet")
         if len(bullets) >= self.max_hero_bullets:
             return
         pygs.play_sound("hero_fire.wav")
@@ -113,7 +114,7 @@ class HeroPlane(Sprite):
             self.max_hero_bullets = self.max_hero_bullets + 1
 
     def hero_add_friend(self):
-        if game_paused or self.hp < 5:
+        if pygs.game_paused or self.hp < 5:
             return
         x = random.randrange(0, pygs.max_x)
         y = pygs.max_y - 25
@@ -135,22 +136,7 @@ class HeroPlane(Sprite):
             self.showing = not self.showing
         else:
             self.show()
-        self._display_hero_bullet_score()
-        self._display_hero_hp()
+        g.display_hero_bullet_score()
+        g.display_hero_hp()
 
-    def _display_hero_hp(self):
-        # 显示血条
-        hp_sprites = get_sprites_by_name("hp")
-        if len(hp_sprites) <= 0:
-            x = 10
-            for index in range(0, g.max_hp + 1):
-                Sprite("hp", x + index * 25, pygs.max_y - 50)
-            hp_sprites = get_sprites_by_name("hp")
-        for index in range(1, len(hp_sprites) + 1):
-            hp_sprites[index - 1].showing = (index <= self.hp)
 
-    def _display_hero_bullet_score(self):
-        display_text = "分数：{0}".format(g.score)
-        text("score_text", display_text, x=pygs.max_x - 110, y=pygs.max_y - 30, size=22, color=(128, 128, 128))
-        remaining_bullets = self.max_hero_bullets - len(get_sprites_by_name("herobullet"))
-        text("bullet_text", "弹药：{0}".format(remaining_bullets), x=5, y=pygs.max_y - 30, size=18, color=(0, 0, 0))

@@ -1,6 +1,7 @@
 from pygame.color import THECOLORS
 
 from pygamescratch import *
+from pygamescratch.sprite import Sprite
 
 
 class Cat(Sprite):

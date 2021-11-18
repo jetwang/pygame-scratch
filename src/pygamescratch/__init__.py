@@ -1,1 +1,1 @@
-from .pygs import *
+from .sprite import *

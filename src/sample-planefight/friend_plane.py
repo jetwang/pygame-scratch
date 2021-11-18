@@ -1,6 +1,7 @@
-import global_var as g
+from global_var import *
 from hero_bullet import HeroBullet
 from pygamescratch import *
+from pygamescratch.sprite import Sprite
 
 
 class FriendPlane(Sprite):
@@ -12,8 +13,8 @@ class FriendPlane(Sprite):
         self.immune = False
         self.move_speed = 3
         pygs.play_sound("callfriend.wav")
-        schedule(g.friend_change_direction_wait, self.change_direction, None)
-        schedule(g.friend_fire_wait, self.friend_fire, None)
+        pygs.schedule(g.friend_change_direction_wait, self.change_direction, None)
+        pygs.schedule(g.friend_fire_wait, self.friend_fire, None)
 
     def friend_fire(self):
         if g.hero is None or g.hero.hp <= 0:
@@ -26,7 +27,7 @@ class FriendPlane(Sprite):
                 target_position = enemy_planes[0].rect.center
                 pygs.play_sound("hero_fire.wav")
                 self.single_fire(self.rect.midtop, target_position)
-        schedule(g.friend_fire_wait, self.friend_fire, None)
+        pygs.schedule(g.friend_fire_wait, self.friend_fire, None)
 
     def single_fire(self, start_position, target_position):
         hero_bullet = HeroBullet(start_position[0], start_position[1])
@@ -35,17 +36,17 @@ class FriendPlane(Sprite):
     def friend_down(self):
         pygs.play_sound("boom.wav")
         self.switch_costume_to("down")
-        schedule(0.2, self.delete, None)
+        pygs.schedule(0.2, self.delete, None)
 
     def got_hit(self):
         self.immune = True
         pygs.play_sound("hit.wav")
         self.hp = self.hp - 1
         if self.hp <= 0:
-            schedule(0.2, self.friend_down, None)
+            pygs.schedule(0.2, self.friend_down, None)
             self.switch_costume_to("hp0")
         else:
-            schedule(1, self.recover, None)
+            pygs.schedule(1, self.recover, None)
 
     def recover(self):
         self.immune = False
@@ -71,7 +72,7 @@ class FriendPlane(Sprite):
             return
         closest_enemy_bullet = self.get_closest_sprite_by_name("enemybullet")
         if closest_enemy_bullet:
-            distance = get_distance(closest_enemy_bullet.rect.center, (self.center_x, self.center_y))
+            distance = pygs.get_distance(closest_enemy_bullet.rect.center, (self.center_x, self.center_y))
             if distance <= 100:
                 if closest_enemy_bullet.center_x >= self.center_x:  # 如果子弹在右边
                     if self.rect.x > pygs.max_x / 4:  # 如果友机左边还有余地
@@ -83,4 +84,4 @@ class FriendPlane(Sprite):
                         self.point(0)
                     else:
                         self.point(180)
-        schedule(g.friend_change_direction_wait, self.change_direction, None)
+        pygs.schedule(g.friend_change_direction_wait, self.change_direction, None)
