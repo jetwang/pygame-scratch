@@ -29,7 +29,7 @@ class GlobalV:
 
         self.friend_fire_wait = 0.25
         self.friend_change_direction_wait = 0.1
-        self.enemy_initial_fire_wait = 5
+        self.enemy_initial_fire_wait = 3
         self.enemy_initial_new_wait = 2
         self.enemy_fire_wait = 5
         self.enemy_new_wait = 2
