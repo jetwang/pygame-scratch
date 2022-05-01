@@ -22,6 +22,8 @@ class Sprite(object):
         self.text = None
         self.text_end_time = None
         self.showing = True
+        self.pygame_sprite = pygame.sprite.Sprite()
+
         sprite_image_name = sprite_name
         if not os.path.exists(sprite_image_name):
             sprite_image_name = pygs.default_sprite_image_folder + sprite_image_name
@@ -45,6 +47,9 @@ class Sprite(object):
         self.center_x = center_x  # 存这个浮点数的原因是，pygame里面的坐标是整数，如果改变坐标的值小于1，那么里面的坐标实际上不会移动
         self.center_y = center_y  # 还有一个原因是，坐标都是角色左上角的位置，但是角度计算都是计算角色中心点，存这2个值方便计算
         self.rotate_angle = 0
+        self.pygame_sprite = pygame.sprite.Sprite()
+        self.pygame_sprite.rect = self.rect
+        self.pygame_sprite.image = self.proto_sprite
 
         pygs.sprites_in_game[self.id] = self
         self.event(EVENT_SPRITE_CREATED, self)
@@ -417,7 +422,7 @@ class Sprite(object):
         self_pygame_rect = self.rect
         for sprite in list(pygs.sprites_in_game.values()):
             if sprite.sprite_name == sprite_name:
-                if pygame.Rect.colliderect(self_pygame_rect, sprite.rect):
+                if pygame.sprite.collide_mask(self.pygame_sprite,sprite.pygame_sprite):
                     sprites.append(sprite)
         return sprites
 

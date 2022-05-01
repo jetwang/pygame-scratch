@@ -452,7 +452,7 @@ class PygameScratch:
         else:
             if not name.endswith(".jpg"):
                 path = self.default_backdrop_image_folder + name + ".jpg"
-                backdrop_image = pygame.image.load(path).convert_alpha()
+            backdrop_image = pygame.image.load(path).convert_alpha()
         backdrop = {"x": 0, "y": 0, "image": backdrop_image, "moving_x": moving_x, "moving_y": moving_y}
         self._backdrops[name] = backdrop
         self._current_backdrop = backdrop
