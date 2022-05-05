@@ -35,6 +35,7 @@ class GlobalV:
         self.enemy_new_wait = 2
 
         self.hero = None
+        self.obstacle = None
         self.pause_icon = None
 
     def display_hero_hp(self):

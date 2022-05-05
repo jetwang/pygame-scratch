@@ -70,6 +70,9 @@ class HeroPlane(Sprite):
             x = x_speed + 1
         self.change_x_by(x)
         self.change_y_by(y)
+        if len(self.get_touching_sprite("obstacle")) > 0:
+            self.change_x_by(-x)
+            self.change_y_by(-y)
 
     def _get_fire_target_position(self, fire_key, pressed_mouse_key_index):
         if self.hp > 0:
@@ -104,8 +107,6 @@ class HeroPlane(Sprite):
         hero_bullet = HeroBullet(x, y, BULLET_TYPE_HERO)
         hero_bullet.point_to(target_x, target_y)
         hero_bullet.switch_costume_to("bullet")
-
-
 
     def add_hp(self):
         if self.hp < g.max_hp:

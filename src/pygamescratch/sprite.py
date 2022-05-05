@@ -22,7 +22,6 @@ class Sprite(object):
         self.text = None
         self.text_end_time = None
         self.showing = True
-        self.pygame_sprite = pygame.sprite.Sprite()
 
         sprite_image_name = sprite_name
         if not os.path.exists(sprite_image_name):
@@ -36,10 +35,9 @@ class Sprite(object):
         self.current_costume_key = current_costume[0]
         self.current_costume_value = current_costume[1]
 
-        self.proto_sprite = pygame.image.load(self.current_costume_value).convert_alpha()
-        self.sprite = self.proto_sprite
+        self.image = pygame.image.load(self.current_costume_value).convert_alpha()
 
-        self.rect = self.sprite.get_rect()  # rect(1,2,3,4) #  self.sprite.get_rect()
+        self.rect = self.image.get_rect()  # rect(1,2,3,4) #  self.sprite.get_rect()
         width = self.rect.width
         height = self.rect.height
         self.rect.x = center_x - width / 2
@@ -47,9 +45,6 @@ class Sprite(object):
         self.center_x = center_x  # 存这个浮点数的原因是，pygame里面的坐标是整数，如果改变坐标的值小于1，那么里面的坐标实际上不会移动
         self.center_y = center_y  # 还有一个原因是，坐标都是角色左上角的位置，但是角度计算都是计算角色中心点，存这2个值方便计算
         self.rotate_angle = 0
-        self.pygame_sprite = pygame.sprite.Sprite()
-        self.pygame_sprite.rect = self.rect
-        self.pygame_sprite.image = self.proto_sprite
 
         pygs.sprites_in_game[self.id] = self
         self.event(EVENT_SPRITE_CREATED, self)
@@ -267,7 +262,7 @@ class Sprite(object):
             self.current_costume_key = name
             self.current_costume_value = self.costume.get(name)
             new_sprite = pygame.image.load(self.current_costume_value).convert_alpha()
-            self.proto_sprite = new_sprite
+            self.image = new_sprite
             self.set_size_to(self.size)
 
     def next_costume(self):
@@ -290,12 +285,12 @@ class Sprite(object):
         :param num: 新的大小，100就是100%，1就是缩放为1%
         :return:
         """
-        proto_rect = self.proto_sprite.get_rect()
+        proto_rect = self.image.get_rect()
         width = proto_rect.width
         height = proto_rect.height
         new_width = int(width * (num / 100))
         new_height = int(height * (num / 100))
-        self.sprite = pygame.transform.smoothscale(self.proto_sprite, (new_width, new_height))
+        self.image = pygame.transform.smoothscale(self.image, (new_width, new_height))
         self.rect.width = new_width
         self.rect.height = new_height
         self.rect.x = self.center_x - new_width / 2
@@ -412,18 +407,18 @@ class Sprite(object):
         pygs.global_event(event_name)
 
     # Sensing
-    def get_touching_sprite(self, sprite_name):
+    def get_touching_sprite(self, sprite_name=None):
         """
         获取接触到的角色
         :param sprite_name: 接触的角色名称
         :return:
         """
         sprites = []
-        self_pygame_rect = self.rect
         for sprite in list(pygs.sprites_in_game.values()):
-            if sprite.sprite_name == sprite_name:
-                if pygame.sprite.collide_mask(self.pygame_sprite,sprite.pygame_sprite):
-                    sprites.append(sprite)
+            if sprite.id != self.id:
+                if sprite_name is None or sprite.sprite_name == sprite_name:
+                    if pygame.Rect.colliderect(self.rect, sprite.rect) and pygame.sprite.collide_mask(self, sprite):
+                        sprites.append(sprite)
         return sprites
 
     def get_closest_sprite_by_name(self, sprite_name):

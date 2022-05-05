@@ -54,7 +54,7 @@ class PygameScratch:
         self.default_sprite_image_folder = "./images/sprite/"  # 默认角色文件夹
         self.default_backdrop_image_folder = "./images/backdrop/"  # 默认字体文件夹
         self.default_backdrop_color = (255, 255, 255)  # 默认背景色
-        self.default_font_name = None  # 默认字体名称
+        self.default_font_name = pygame.font.match_font("幼圆")  # 默认字体名称
         self.default_key_repeat_delay = 20  # 按压键盘重复触发key down事件的间隔
         self.max_x, self.max_y = self._default_screen_size
         self.screen_center_x, self.screen_center_y = (self.max_x / 2, self.max_y / 2)
@@ -199,7 +199,7 @@ class PygameScratch:
 
     def _sprites_frame_action(self):
         for s in list(self.sprites_in_game.values()):
-            if not s.sprite.get_locked():
+            if not s.image.get_locked():
                 s.action()
 
     def _update_screen(self):
@@ -212,13 +212,13 @@ class PygameScratch:
             self._screen.fill(self.default_backdrop_color)
         # draw all sprite
         for s in list(self.sprites_in_game.values()):
-            if not s.sprite.get_locked() and s.showing:
+            if not s.image.get_locked() and s.showing:
                 rect = s.rect
                 if s.rotate_angle != 0:
-                    new_sprite = pygame.transform.rotate(s.sprite, s.rotate_angle)
+                    new_sprite = pygame.transform.rotate(s.image, s.rotate_angle)
                     self._screen.blit(new_sprite, rect)
                 else:
-                    self._screen.blit(s.sprite, rect)
+                    self._screen.blit(s.image, rect)
                 if s.text_end_time is not None and time.perf_counter() > s.text_end_time:
                     s.text = None
                     s.text_end_time = None

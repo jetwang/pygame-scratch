@@ -1,5 +1,6 @@
 from enemy_plane import *
 from hero_plane import *
+from obstacle import *
 from pygamescratch import *
 
 
@@ -60,6 +61,7 @@ def initialize_game():
     g.__init__()
     pygs.add_backdrop("images/backdrop/background.png", moving_y=1)
     g.hero = HeroPlane(pygs.screen_center_x, pygs.screen_center_y - 30)
+    g.obstacle = Obstacle(pygs.screen_center_x, pygs.screen_center_y )
     refresh_enemy_icons()
     pygs.schedule(g.enemy_new_wait, create_enemy, None)
     g.display_hero_hp()

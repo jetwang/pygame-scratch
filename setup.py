@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pygamescratch',
-    version='0.4.2',
+    version='0.4.7',
     description='provide scratch like API using pygame, while just using 2 threads',
     keywords='scratch children education learn python game easy',
     author='Jet Wang',
