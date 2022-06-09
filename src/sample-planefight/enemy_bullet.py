@@ -7,13 +7,13 @@ class EnemyBullet(Sprite):
         if enemy_type == 0:
             self.set_size_to(50)
             self.switch_costume_to("bullet1")
-            self.move_speed = 3
+            self.move_speed = 2
         elif enemy_type == 1:
             self.set_size_to(80)
-            self.move_speed = 4
+            self.move_speed = 2
         elif enemy_type == 2:
-            self.set_size_to(100)
-            self.move_speed = 5
+            self.set_size_to(80)
+            self.move_speed = 2
         self.point_to(target_x, target_y)
         self.rotate_angle = 90 - self.direction
 
