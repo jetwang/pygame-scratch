@@ -35,7 +35,8 @@ class Sprite(object):
         self.current_costume_key = current_costume[0]
         self.current_costume_value = current_costume[1]
 
-        self.image = pygame.image.load(self.current_costume_value).convert_alpha()
+        self.original_image = pygame.image.load(self.current_costume_value).convert_alpha()
+        self.image = self.original_image
 
         self.rect = self.image.get_rect()  # rect(1,2,3,4) #  self.sprite.get_rect()
         width = self.rect.width
@@ -285,12 +286,12 @@ class Sprite(object):
         :param num: 新的大小，100就是100%，1就是缩放为1%
         :return:
         """
-        proto_rect = self.image.get_rect()
+        proto_rect = self.original_image.get_rect()
         width = proto_rect.width
         height = proto_rect.height
         new_width = int(width * (num / 100))
         new_height = int(height * (num / 100))
-        self.image = pygame.transform.smoothscale(self.image, (new_width, new_height))
+        self.image = pygame.transform.smoothscale(self.original_image, (new_width, new_height))
         self.rect.width = new_width
         self.rect.height = new_height
         self.rect.x = self.center_x - new_width / 2
