@@ -1,3 +1,5 @@
+import random
+
 from pygamescratch import Sprite, pygs
 from store import Store
 
@@ -6,13 +8,16 @@ class RescueBag(Sprite):
     def __init__(self, center_x=0, center_y=0):
         super().__init__("rescue_bag", center_x, center_y)
         self.m = 1
-        self.point(90)
+        self.point(random.randint(-90, 270))
         self.got = False
 
     def action(self):
         self.move(self.m)
         if self.touching_edge():
-            self.delete()
+            if self.got:
+                self.delete()
+            else:
+                self.point(random.randint(-90, 270))
         if not self.got:
             good = self.get_touching_sprite("robot")
             if len(good) > 0:

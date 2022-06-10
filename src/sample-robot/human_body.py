@@ -1,11 +1,12 @@
 from pygamescratch import Sprite, pygs
+from store import Store
 
 
 class HumanBody(Sprite):
 
     def __init__(self, sprite_name, center_x=0, center_y=0):
         super().__init__(sprite_name, center_x, center_y)
-        self.hp = 2000
+        self.hp = Store.max_hp
         self.hitting = False
 
     def action(self):
@@ -16,11 +17,11 @@ class HumanBody(Sprite):
             pygs.play_sound("吃东西.wav")
             self.hitting = True
             pygs.schedule(1, self.recover, None)
-            if not virus[0].died:
+            if not virus[0].is_dead():
                 self.hp -= virus[0].hurt
                 virus[0].delete()
-        if self.hp > 2000:
-            self.hp = 2000
+        if self.hp > Store.max_hp:
+            self.hp = Store.max_hp
         if self.hitting:
             self.showing = not self.showing
         else:

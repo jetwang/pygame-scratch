@@ -56,7 +56,8 @@ class Robot(Sprite):
         self.fire()
 
     def fire_mouse(self):
-        self.target = pygs.mouse_position
+        self.target = (self.center_x, self.center_y)
+        # self.target = pygs.mouse_position
         self.fire()
 
     def walking(self):
@@ -71,7 +72,7 @@ class Robot(Sprite):
         if self.target is not None and self.pills > 0:
             pygs.play_sound("biu.wav")
             self.pills -= 1
-            pill = Pill("pill", self.target[0], 0)
+            pill = Pill("pill", self.target[0], self.target[1])
             pill.set_size_to(80)
             self.target = None
 

@@ -16,6 +16,7 @@ def start_up():
     pygs.clear_sprites()
     pygs.clear_schedule()
     Store.timeo = RemainTime()
+    Store.max_hp = 2000
     Store.human_body = HumanBody("human_body", -50, pygs.screen_center_y)
     from pygamescratch import Sprite
     Store.tbf = Sprite("tbf", 30, pygs.max_y-90)
@@ -56,7 +57,7 @@ def change_game_paused_state():
         "1.肺活量原始值3000，病毒攻入底下的肺部会减少肺活量，肺活量小于等于0，病人死亡",
         "2.圈圈包围住的是科学家投放的装备，分别可以增加肺活量，召唤白细胞，提供药丸",
         "3.纳米机器人上下左右移动：W、A、D、S四个键",
-        "4.纳米机器人如果手中有药丸，可以点击鼠标左键投放指定位置",
+        "4.纳米机器人如果手中有药丸，可以点击鼠标左键或者 J 键发射",
         "5.开始、暂停、继续：空格",
         "6.重启游戏：回车键"
         "          ",

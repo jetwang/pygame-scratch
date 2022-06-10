@@ -17,14 +17,14 @@ class RemainTime:
         pygs.schedule(30, self.creat_rescue_bag, 10)
 
     def create_pill_bag(self):
-        PillBag(random.randint(0, pygs.max_x), 10)
+        PillBag(random.randint(0, pygs.max_x), 20)
 
     def creat_rescue_bag(self):
-        if Store.human_body.hp < 3000:
-            RescueBag(random.randint(0, pygs.max_y), 10)
+        if Store.human_body.hp < Store.max_hp:
+            RescueBag(random.randint(0, pygs.max_x), 20)
 
     def creat_wbc_bags(self):
-        WBCBag("wbc_bag", random.randint(0, pygs.max_x), 10)
+        WBCBag(random.randint(0, pygs.max_x), 20)
 
     def time(self):
         self.timeo = self.timeo - 1

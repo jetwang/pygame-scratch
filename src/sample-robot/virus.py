@@ -40,7 +40,7 @@ class Virus(Sprite):
             if not self.touching_edge():
                 self.move(5)
             self.breath()
-            self.showing = not (self.clock_tip % 4 == 1)
+            self.showing = self.clock_tip % 3 != 1
         elif self.status == VirusStatus.normal:
             self.show()
             self.point(180)
@@ -63,13 +63,17 @@ class Virus(Sprite):
         self.set_size_to(self.size + self.acting_size_changes)
 
     def got_hit(self):
-        pygs.play_sound("击打身体.wav")
         self.hp -= 1
-        if self.hp >= 0:
+        if self.hp > 0:
+            pygs.play_sound("击打身体.wav")
             self.status = VirusStatus.hitting
             pygs.schedule(1, self.recover, None)
         else:
+            pygs.play_sound("破碎.wav")
             self.status = VirusStatus.dead
+
+    def is_dead(self):
+        return self.status == VirusStatus.dead
 
     def recover(self):
         self.status = VirusStatus.normal
