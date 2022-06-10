@@ -28,6 +28,6 @@ class RemainTime:
 
     def time(self):
         self.timeo = self.timeo - 1
-        pygs.text("f", str(Store.human_body.hp), x=pygs.max_x - 60, y=20, size=16, color=(0, 0, 0))
-        pygs.text("pilles", str(Store.robot.pills), x=pygs.max_x - 60, y=50, size=16, color=(0, 0, 0))
-        pygs.text("schedule_time", str(self.timeo), x=pygs.max_x - 60, y=80, size=16, color=(0, 0, 0))
+        pygs.text("f", str(Store.human_body.hp), x=50, y=pygs.max_y-100, size=16, color=(0, 0, 0))
+        pygs.text("pilles", str(Store.robot.pills),x=50, y=pygs.max_y-70, size=16, color=(0, 0, 0))
+        pygs.text("schedule_time", str(self.timeo), x=50, y=pygs.max_y-40, size=16, color=(0, 0, 0))

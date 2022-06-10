@@ -263,6 +263,7 @@ class Sprite(object):
             self.current_costume_key = name
             self.current_costume_value = self.costume.get(name)
             new_sprite = pygame.image.load(self.current_costume_value).convert_alpha()
+            self.original_image = new_sprite
             self.image = new_sprite
             self.set_size_to(self.size)
 

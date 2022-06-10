@@ -5,7 +5,7 @@ from store import Store
 class RescueBag(Sprite):
     def __init__(self, center_x=0, center_y=0):
         super().__init__("rescue_bag", center_x, center_y)
-        self.m = 3
+        self.m = 1
         self.point(90)
         self.got = False
 

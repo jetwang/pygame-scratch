@@ -16,32 +16,31 @@ def start_up():
     pygs.clear_sprites()
     pygs.clear_schedule()
     Store.timeo = RemainTime()
-    Store.human_body = HumanBody("human_body", pygs.screen_center_x + 300, 575)
-    Store.human_body.set_size_to(1000)
+    Store.human_body = HumanBody("human_body", -50, pygs.screen_center_y)
     from pygamescratch import Sprite
-    Store.tbf = Sprite("tbf", pygs.max_x - 80, 30)
-    Store.tby = Sprite("tby", pygs.max_x - 80, 60)
-    Store.tbt = Sprite("tbt", pygs.max_x - 80, 90)
+    Store.tbf = Sprite("tbf", 30, pygs.max_y-90)
+    Store.tby = Sprite("tby", 30, pygs.max_y-60)
+    Store.tbt = Sprite("tbt", 30, pygs.max_y-30)
     Store.tby.set_size_to(50)
     Store.tbt.set_size_to(50)
     Store.tbf.set_size_to(50)
     Store.robot = Robot("robot", 500, 400)
-    pygs.schedule(2, virus1, 2)
+    pygs.schedule(2, virus1, 3)
     pygs.schedule(30, virus2, 2)
-    pygs.schedule(60, virus3, 2)
+    pygs.schedule(60, virus3, 1)
     pygs.add_backdrop("images/backdrop/img.jpg")
 
 
 def virus1():
-    Virus(1, random.randint(0, pygs.max_x), 50)
+    Virus(1, pygs.max_x,random.randint(0, pygs.max_y))
 
 
 def virus2():
-    Virus(2, random.randint(0, pygs.max_x), 50)
+    Virus(2, pygs.max_x,random.randint(0, pygs.max_y))
 
 
 def virus3():
-    Virus(3, random.randint(0, pygs.max_x), 50)
+    Virus(3, pygs.max_x,random.randint(0, pygs.max_y))
 
 
 def change_game_paused_state():
